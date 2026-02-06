@@ -25,18 +25,30 @@ html, body {
 }
 
 #buttons {
-    position: absolute; /* über dem canvas */
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 5px;
-    background-color: rgba(0, 0, 0, 0.5); /* teiltransparent */
-    padding: 5px 10px;
-    border-radius: 8px;
-    z-index: 10; /* über Bild */
-    color: #fff;
-}
+     position: absolute;
+     top: 10px;
+     left: 50%;
+     transform: translateX(-50%);
+     display: flex;
+     gap: 5px;
+     background-color: rgba(0, 0, 0, 0.5);
+     padding: 5px 10px;
+     border-radius: 8px;
+     z-index: 10;
+     color: #fff;
+
+     /* neu: sanftes ein-/ausblenden */
+     opacity: 1;
+     transition: opacity 0.3s ease;
+     pointer-events: auto; /* bleibt klickbar */
+ }
+
+ /* Zustand „unsichtbar“ */
+ #buttons.hidden {
+     opacity: 0;
+     pointer-events: none; /* keine Klicks, wenn unsichtbar */
+ }
+
 
 #buttons button {
     background: rgba(255,255,255,0.2);

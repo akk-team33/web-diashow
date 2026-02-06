@@ -1,6 +1,7 @@
 let images = [];
 let currentIndex = 0;
 let scale = 1.0;
+let hideTimer;
 
 const SCALE_STEP = 0.1;
 const SCALE_MIN = 0.1;
@@ -19,6 +20,8 @@ const btnLast  = document.getElementById("last");
 
 const btnPlus  = document.getElementById("plus");
 const btnMinus = document.getElementById("minus");
+
+const btnContainer = document.getElementById("buttons");
 
 // JSON laden
 fetch("dia-show.json")
@@ -61,6 +64,16 @@ function showImage(index) {
         scale = Math.min(scaleX, scaleY, 1.0); // nicht größer als 100%
         applyScale();
     }
+}
+
+function showControls() {
+    btnContainer.classList.remove("hidden");
+
+    // Timer zurücksetzen
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+        btnContainer.classList.add("hidden");
+    }, 2000); // Buttons verschwinden nach 2 Sekunden ohne Mausbewegung
 }
 
 function firstImage() {
@@ -111,6 +124,9 @@ btnNext.addEventListener("click", nextImage);
 btnPrev.addEventListener("click", prevImage);
 btnPlus.addEventListener("click", zoomIn);
 btnMinus.addEventListener("click", zoomOut);
+
+// Mausbewegung im gesamten Dokument überwachen
+document.addEventListener("mousemove", showControls);
 document.addEventListener("keydown", (event) => {
 
     // Nur reagieren, wenn Bilder geladen sind
@@ -146,4 +162,7 @@ document.addEventListener("keydown", (event) => {
             break;
     }
 });
+
+// Initial: Buttons sichtbar, Timer starten
+showControls();
 
