@@ -2,6 +2,7 @@ let images = [];
 let currentIndex = 0;
 let scale = 1.0;
 let hideTimer;
+let mouseOverButtons = false;
 
 const SCALE_STEP = 0.1;
 const SCALE_MIN = 0.1;
@@ -67,13 +68,18 @@ function showImage(index) {
 }
 
 function showControls() {
+    // Buttons immer sichtbar machen, wenn Maus bewegt wird
     btnContainer.classList.remove("hidden");
 
     // Timer zurücksetzen
     clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => {
-        btnContainer.classList.add("hidden");
-    }, 2000); // Buttons verschwinden nach 2 Sekunden ohne Mausbewegung
+
+    // Timer nur starten, wenn Maus NICHT über Buttons ist
+    if (!mouseOverButtons) {
+        hideTimer = setTimeout(() => {
+            btnContainer.classList.add("hidden");
+        }, 2000);
+    }
 }
 
 function firstImage() {
@@ -161,6 +167,21 @@ document.addEventListener("keydown", (event) => {
             event.preventDefault();
             break;
     }
+});
+
+// Maus über Buttons überwachen
+btnContainer.addEventListener("mouseenter", () => {
+    mouseOverButtons = true;
+    clearTimeout(hideTimer); // Timer stoppen, solange Maus drüber
+    btnContainer.classList.remove("hidden");
+});
+
+btnContainer.addEventListener("mouseleave", () => {
+    mouseOverButtons = false;
+    // Timer starten, wenn Maus den Button-Bereich verlässt
+    hideTimer = setTimeout(() => {
+        btnContainer.classList.add("hidden");
+    }, 2000);
 });
 
 // Initial: Buttons sichtbar, Timer starten
