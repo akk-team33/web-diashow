@@ -97,14 +97,21 @@ btnMinus.addEventListener("click", zoomOut);
 // ---------------------------
 document.addEventListener("keydown", e => {
     if (!images.length) return;
+
+    let handled = true;
+
     switch (e.key) {
         case "ArrowLeft":  e.shiftKey ? firstImage() : prevImage(); break;
         case "ArrowRight": e.shiftKey ? lastImage()  : nextImage(); break;
         case "+": case "=": zoomIn(); break;
         case "-": zoomOut(); break;
-        default: return;
+        default: handled = false;
     }
-    e.preventDefault();
+
+    if (handled) {
+        e.preventDefault();
+        showControls(); // Buttons sichtbar machen, Timer zurücksetzen
+    }
 });
 
 // ---------------------------
