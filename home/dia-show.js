@@ -46,8 +46,21 @@ function showImage(index) {
     imgElement.alt = images[index];
     fileSpan.textContent = images[index];
 
-    scale = 1.0;
-    applyScale();
+    // Bild vollständig laden, um natürliche Größe zu kennen
+    imgElement.onload = () => {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const imgWidth = imgElement.naturalWidth;
+        const imgHeight = imgElement.naturalHeight;
+
+        // Maßstab berechnen, um Bild komplett einzupassen
+        const scaleX = viewportWidth / imgWidth;
+        const scaleY = viewportHeight / imgHeight;
+
+        scale = Math.min(scaleX, scaleY, 1.0); // nicht größer als 100%
+        applyScale();
+    }
 }
 
 function firstImage() {
