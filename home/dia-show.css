@@ -18,8 +18,8 @@ html, body {
 }
 
 #canvas img {
-    max-width: 100%;
-    max-height: 100%;
+    width: naturalWidth;
+    height: naturalHeight;
     /* transform wird per JS gesetzt */
     transition: transform 0.2s ease; /* sanftes Zoomen */
 }
