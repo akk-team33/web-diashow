@@ -74,10 +74,12 @@ function firstImage() {
      }
  }
 
- function applyScale() {
-     imgElement.style.transform = `scale(${scale})`;
-     imgElement.style.transformOrigin = "center center";
- }
+function applyScale() {
+    imgElement.style.transform = `scale(${scale})`;
+    imgElement.style.transformOrigin = "center center";
+
+    scaleSpan.textContent = Math.round(scale * 100) + "%";
+}
 
  function zoomIn() {
      scale = Math.min(scale + SCALE_STEP, SCALE_MAX);
