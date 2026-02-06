@@ -1,3 +1,6 @@
+// ---------------------------
+// Variablen & DOM-Elemente
+// ---------------------------
 let images = [];
 let currentIndex = 0;
 let scale = 1.0;
@@ -7,121 +10,79 @@ let mouseOverButtons = false;
 const SCALE_STEP = 0.1;
 const SCALE_MIN = 0.1;
 const SCALE_MAX = 5.0;
-
+const HIDE_DELAY = 2000; // Buttons verschwinden nach 2s Inaktivität
 
 // Elemente
-const imgElement = document.getElementById("image");
-const fileSpan = document.getElementById("file");
-const scaleSpan = document.getElementById("scale");
+const imgElement   = document.getElementById("image");
+const fileSpan     = document.getElementById("file");
+const scaleSpan    = document.getElementById("scale");
+const btnContainer = document.getElementById("buttons");
 
 const btnFirst = document.getElementById("first");
 const btnPrev  = document.getElementById("prev");
 const btnNext  = document.getElementById("next");
 const btnLast  = document.getElementById("last");
-
 const btnPlus  = document.getElementById("plus");
 const btnMinus = document.getElementById("minus");
 
-const btnContainer = document.getElementById("buttons");
-
+// ---------------------------
 // JSON laden
+// ---------------------------
 fetch("dia-show.json")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("JSON konnte nicht geladen werden");
-        }
-        return response.json();
+    .then(resp => {
+        if (!resp.ok) throw new Error("JSON konnte nicht geladen werden");
+        return resp.json();
     })
     .then(data => {
         images = data;
-
-        if (images.length > 0) {
-            showImage(0); // erstes Bild anzeigen
-        }
+        if (images.length) showImage(0);
     })
-    .catch(error => {
-        console.error("Fehler:", error);
-    });
+    .catch(err => console.error("Fehler:", err));
 
-// Anzeige-Funktion
+// ---------------------------
+// Bildanzeige
+// ---------------------------
 function showImage(index) {
+    if (!images.length) return;
     currentIndex = index;
     imgElement.src = images[index];
     imgElement.alt = images[index];
     fileSpan.textContent = images[index];
 
-    // Bild vollständig laden, um natürliche Größe zu kennen
     imgElement.onload = () => {
-        const viewportWidth = window.innerWidth;
+        const viewportWidth  = window.innerWidth;
         const viewportHeight = window.innerHeight;
-
-        const imgWidth = imgElement.naturalWidth;
+        const imgWidth  = imgElement.naturalWidth;
         const imgHeight = imgElement.naturalHeight;
 
-        // Maßstab berechnen, um Bild komplett einzupassen
+        // Fit-to-Viewport
         const scaleX = viewportWidth / imgWidth;
         const scaleY = viewportHeight / imgHeight;
+        scale = Math.min(scaleX, scaleY, 1.0);
 
-        scale = Math.min(scaleX, scaleY, 1.0); // nicht größer als 100%
         applyScale();
-    }
+    };
 }
 
-function showControls() {
-    // Buttons immer sichtbar machen, wenn Maus bewegt wird
-    btnContainer.classList.remove("hidden");
-
-    // Timer zurücksetzen
-    clearTimeout(hideTimer);
-
-    // Timer nur starten, wenn Maus NICHT über Buttons ist
-    if (!mouseOverButtons) {
-        hideTimer = setTimeout(() => {
-            btnContainer.classList.add("hidden");
-        }, 2000);
-    }
-}
-
-function firstImage() {
-     if (images.length > 0) {
-         showImage(0);
-     }
- }
-
- function lastImage() {
-     if (images.length > 0) {
-         showImage(images.length - 1);
-     }
- }
-
- function nextImage() {
-     if (currentIndex < images.length - 1) {
-         showImage(currentIndex + 1);
-     }
- }
-
- function prevImage() {
-     if (currentIndex > 0) {
-         showImage(currentIndex - 1);
-     }
- }
-
+// ---------------------------
+// Zoom & Anzeige
+// ---------------------------
 function applyScale() {
     imgElement.style.transform = `scale(${scale})`;
     imgElement.style.transformOrigin = "center center";
-
     scaleSpan.textContent = Math.round(scale * 100) + "%";
 }
 
- function zoomIn() {
-     scale = Math.min(scale + SCALE_STEP, SCALE_MAX);
-     applyScale();
- }
+function zoomIn()  { scale = Math.min(scale + SCALE_STEP, SCALE_MAX); applyScale(); }
+function zoomOut() { scale = Math.max(scale - SCALE_STEP, SCALE_MIN); applyScale(); }
 
- function zoomOut() {
-     scale = Math.max(scale - SCALE_STEP, SCALE_MIN);
-     applyScale();
- }
+// ---------------------------
+// Navigation
+// ---------------------------
+function firstImage() { if (images.length) showImage(0); }
+function lastImage()  { if (images.length) showImage(images.length - 1); }
+function nextImage()  { if (currentIndex < images.length - 1) showImage(currentIndex + 1); }
+function prevImage()  { if (currentIndex > 0) showImage(currentIndex - 1); }
 
 // Buttons
 btnFirst.addEventListener("click", firstImage);
@@ -131,59 +92,49 @@ btnPrev.addEventListener("click", prevImage);
 btnPlus.addEventListener("click", zoomIn);
 btnMinus.addEventListener("click", zoomOut);
 
-// Mausbewegung im gesamten Dokument überwachen
-document.addEventListener("mousemove", showControls);
-document.addEventListener("keydown", (event) => {
-
-    // Nur reagieren, wenn Bilder geladen sind
-    if (images.length === 0) return;
-
-    switch (event.key) {
-        case "ArrowLeft":
-            if (event.shiftKey) {
-                firstImage();
-            } else {
-                prevImage();
-            }
-            event.preventDefault();
-            break;
-
-        case "ArrowRight":
-            if (event.shiftKey) {
-                lastImage();
-            } else {
-                nextImage();
-            }
-            event.preventDefault();
-            break;
-
-        case "+":
-            zoomIn();
-            event.preventDefault();
-            break;
-
-        case "-":
-            zoomOut();
-            event.preventDefault();
-            break;
+// ---------------------------
+// Tastatursteuerung
+// ---------------------------
+document.addEventListener("keydown", e => {
+    if (!images.length) return;
+    switch (e.key) {
+        case "ArrowLeft":  e.shiftKey ? firstImage() : prevImage(); break;
+        case "ArrowRight": e.shiftKey ? lastImage()  : nextImage(); break;
+        case "+": case "=": zoomIn(); break;
+        case "-": zoomOut(); break;
+        default: return;
     }
+    e.preventDefault();
 });
 
-// Maus über Buttons überwachen
+// ---------------------------
+// Smart Controls (Auto-Hide)
+// ---------------------------
+function scheduleHide() {
+    clearTimeout(hideTimer);
+    if (!mouseOverButtons) {
+        hideTimer = setTimeout(() => btnContainer.classList.add("hidden"), HIDE_DELAY);
+    }
+}
+
+function showControls() {
+    btnContainer.classList.remove("hidden");
+    scheduleHide();
+}
+
+// Mausbewegung
+document.addEventListener("mousemove", showControls);
+
+// Maus über Buttons
 btnContainer.addEventListener("mouseenter", () => {
     mouseOverButtons = true;
-    clearTimeout(hideTimer); // Timer stoppen, solange Maus drüber
+    clearTimeout(hideTimer);
     btnContainer.classList.remove("hidden");
 });
-
 btnContainer.addEventListener("mouseleave", () => {
     mouseOverButtons = false;
-    // Timer starten, wenn Maus den Button-Bereich verlässt
-    hideTimer = setTimeout(() => {
-        btnContainer.classList.add("hidden");
-    }, 2000);
+    scheduleHide();
 });
 
-// Initial: Buttons sichtbar, Timer starten
+// Initial
 showControls();
-
