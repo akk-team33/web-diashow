@@ -5,21 +5,24 @@
     <title>Dia Show</title>
     <link rel="stylesheet" href="dia-show.css">
 </head>
-<body class="main">
+<body>
 
-<div id="buttons">
-    <button id="first">|&lt;</button>
-    <button id="prev">&lt;</button>
-    <button id="minus">-</button>
-    <span id="file">–</span>
-    <span id="scale">100%</span>
-    <button id="plus">+</button>
-    <button id="next">&gt;</button>
-    <button id="last">&gt;|</button>
-</div>
+<table id="buttons"><tr>
+    <td><button id="first" title="First Image [[SHIFT] &larr;]">|&lt;</button></td>
+    <td><button id="prev" title="Previous Image [&larr;]">&lt;</button></td>
+    <td><button id="minus" title="Zoom Out [-]">-</button></td>
+    <td><span id="file">–--</span></td>
+    <td>-</td>
+    <td><span id="scale">---%</span></td>
+    <td><button id="plus" title="Zoom In [+]">+</button></td>
+    <td><button id="next" title="Next Image [&rarr;]">&gt;</button></td>
+    <td><button id="last" title="Last Image [[SHIFT] &rarr;]">&gt;|</button></td>
+</tr></table>
 
 <div id="canvas">
-    <img id="image" src="" alt="">
+    <div id="stage">
+        <img id="image" src="NO.JPG" alt="NO.JPG">
+    </div>
 </div>
 
 <script src="dia-show.js"></script>
