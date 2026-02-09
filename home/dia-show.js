@@ -128,6 +128,18 @@ function onKeyDown(event) {
     }
 }
 
+function onResize() {
+    if (!image.naturalWidth) return;
+
+    const fitScale = fullViewScale();
+
+    if (currentScale <= fitScale) {
+        setScale(fitScale);
+    } else {
+        centerImage();
+    }
+}
+
 function firstImage()     { showImage(0); }
 function lastImage()      { showImage(images.length - 1); }
 function nextImage()      { showImage(Math.min(images.length - 1, currentIndex + 1)); }
@@ -161,6 +173,8 @@ btnMinus.addEventListener("click", zoomOut);
 
 document.addEventListener("mousemove", showControls);
 document.addEventListener("keydown", onKeyDown);
+
+window.addEventListener("resize", onResize);
 
 // more initial operations ...
 showControls();
