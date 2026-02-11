@@ -128,6 +128,7 @@ function onKeyDown(event) {
         case "-": zoomOut(); break;
         case "#": zoomToggleView(); break;
         case "*": zoomOverView(); break;
+        case "i": showControls(); break;
         default: handled = false;
     }
     if (handled) {
