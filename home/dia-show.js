@@ -8,6 +8,7 @@ const HIDE_DELAY = 2000;
 
 const docTile      = document.title;
 const canvas       = document.getElementById("canvas");
+const stage        = document.getElementById("stage");
 const image        = document.getElementById("image");
 const indexSpan    = document.getElementById("index");
 const fileSpan     = document.getElementById("file");
@@ -92,7 +93,7 @@ function nextScale(scale) {
     return scales.find(n => n > scale) ?? scale;
 }
 
-function getDimension(scale) {
+function getSize(scale) {
     return {
         width:  Math.round(image.naturalWidth  * scale),
         height: Math.round(image.naturalHeight * scale)
@@ -111,10 +112,10 @@ function setScale(scale) {
     currentScale = scale;
     scaleSpan.textContent = Math.round(scale * 100) + "%";
 
-    const dim = getDimension(scale);
+    const size = getSize(scale);
 
-    image.style.width  = dim.width  + "px";
-    image.style.height = dim.height + "px";
+    image.style.width  = size.width  + "px";
+    image.style.height = size.height + "px";
 
     centerImage();
 }
