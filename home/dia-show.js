@@ -194,6 +194,14 @@ function zoomOverView()   { setScale(overViewScale(), canvasCenterPoint()); }
 
 image.addEventListener("load", zoomFitView);
 
+canvas.addEventListener("click", event => {
+    const point = {
+        x : event.offsetX,
+        y : event.offsetY
+    };
+    setScale(toggleScale(), point);
+});
+
 btnContainer.addEventListener("mouseenter", () => {
     mouseOverButtons = true;
     clearTimeout(hideTimer);
