@@ -121,18 +121,32 @@ function setScale(scale) {
 
 function onKeyDown(event) {
     let handled = true;
+
     switch (event.key) {
-        case "ArrowLeft":  event.shiftKey ? firstImage() : prevImage(); break;
-        case "ArrowRight": event.shiftKey ? lastImage()  : nextImage(); break;
+        // ---------------- Navigation (main) ----------------
+        case "Home":     firstImage(); break;
+        case "PageUp":   prevImage();  break;
+        case "PageDown": lastImage();  break;
+        case "End":      lastImage();  break;
+
+        // ---------------- Navigation (alternative) ----------------
+        case " ":         event.shiftKey ? lastImage() : nextImage();  break;
+        case "Backspace": event.shiftKey ? firstImage() : prevImage(); break;
+
+        // ---------------- Zoom / View ----------------
         case "+": zoomIn(); break;
         case "-": zoomOut(); break;
         case "#": zoomToggleView(); break;
         case "*": zoomOverView(); break;
+
+        // ---------------- Controls ----------------
         case "i": showControls(); break;
+
         default: handled = false;
     }
+
     if (handled) {
-        event.preventDefault();
+        event.preventDefault(); // important on Space/Backspace
         showControls();
     }
 }
