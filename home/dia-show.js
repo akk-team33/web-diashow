@@ -9,6 +9,7 @@ const HIDE_DELAY = 2000;
 const docTile      = document.title;
 const canvas       = document.getElementById("canvas");
 const image        = document.getElementById("image");
+const indexSpan     = document.getElementById("index");
 const fileSpan     = document.getElementById("file");
 const scaleSpan    = document.getElementById("scale");
 const btnContainer = document.getElementById("buttons");
@@ -51,6 +52,7 @@ function showControls() {
 function showImage(index) {
     if (0 < images.length) {
         currentIndex = index;
+        indexSpan.textContent = (index + 1) + "/" + images.length
         showImageByURL(images[index]);
     }
 }
