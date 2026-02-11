@@ -52,7 +52,7 @@ function showControls() {
 function showImage(index) {
     if (0 < images.length) {
         currentIndex = index;
-        indexSpan.textContent = (index + 1) + "/" + images.length
+        indexSpan.textContent = (index + 1) + "/" + images.length;
         showImageByURL(images[index]);
     }
 }
