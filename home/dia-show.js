@@ -126,10 +126,8 @@ function onKeyDown(event) {
         case "ArrowRight": event.shiftKey ? lastImage()  : nextImage(); break;
         case "+": zoomIn(); break;
         case "-": zoomOut(); break;
-        case "*": zoomNatural(); break;
         case "#": zoomToggleView(); break;
-        case "w": zoomFullWidth(); break;
-        case "h": zoomFullHeight(); break;
+        case "*": zoomOverView(); break;
         default: handled = false;
     }
     if (handled) {
@@ -160,8 +158,7 @@ function zoomOut()        { setScale(prevScale(currentScale)); }
 function zoomNatural()    { setScale(1.0); }
 function zoomFullView()   { setScale(fullViewScale()); }
 function zoomToggleView() { setScale(toggleScale()); }
-function zoomFullWidth()  { setScale(fullWidthScale()); }
-function zoomFullHeight() { setScale(fullHeightScale()); }
+function zoomOverView()   { setScale(overViewScale()); }
 
 image.addEventListener("load", zoomFullView);
 
