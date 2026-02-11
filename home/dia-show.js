@@ -73,7 +73,7 @@ function fullHeightScale() {
     return canvas.clientHeight / image.naturalHeight;
 }
 
-function fullViewScale() {
+function fitViewScale() {
     return Math.min(fullWidthScale(), fullHeightScale());
 }
 
@@ -82,7 +82,7 @@ function overViewScale() {
 }
 
 function toggleScale(scale) {
-    return (currentScale === 1.0) ? fullViewScale() : 1.0;
+    return (currentScale === 1.0) ? fitViewScale() : 1.0;
 }
 
 function prevScale(scale) {
@@ -155,7 +155,7 @@ function onKeyDown(event) {
 function onResize() {
     if (!image.naturalWidth) return;
 
-    const fitScale = fullViewScale();
+    const fitScale = fitViewScale();
 
     if (currentScale <= fitScale) {
         setScale(fitScale);
@@ -172,11 +172,11 @@ function prevImage()      { showImage(Math.max(0, currentIndex - 1)); }
 function zoomIn()         { setScale(nextScale(currentScale)); }
 function zoomOut()        { setScale(prevScale(currentScale)); }
 function zoomNatural()    { setScale(1.0); }
-function zoomFullView()   { setScale(fullViewScale()); }
+function zoomFitView()    { setScale(fitViewScale()); }
 function zoomToggleView() { setScale(toggleScale()); }
 function zoomOverView()   { setScale(overViewScale()); }
 
-image.addEventListener("load", zoomFullView);
+image.addEventListener("load", zoomFitView);
 
 btnContainer.addEventListener("mouseenter", () => {
     mouseOverButtons = true;
