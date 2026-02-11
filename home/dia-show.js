@@ -65,20 +65,20 @@ function showImageByURL(url) {
     document.title = url + " - " + docTile;
 }
 
-function fullWidthScale() {
+function fitWidthScale() {
     return canvas.clientWidth / image.naturalWidth;
 }
 
-function fullHeightScale() {
+function fitHeightScale() {
     return canvas.clientHeight / image.naturalHeight;
 }
 
 function fitViewScale() {
-    return Math.min(fullWidthScale(), fullHeightScale());
+    return Math.min(fitWidthScale(), fitHeightScale());
 }
 
 function overViewScale() {
-    return Math.max(fullWidthScale(), fullHeightScale());
+    return Math.max(fitWidthScale(), fitHeightScale());
 }
 
 function toggleScale(scale) {
@@ -100,15 +100,43 @@ function getSize(scale) {
     };
 }
 
-function centerImage() {
-    const scrollX = Math.max(0, (image.clientWidth  - canvas.clientWidth)  / 2);
-    const scrollY = Math.max(0, (image.clientHeight - canvas.clientHeight) / 2);
-
-    canvas.scrollLeft = scrollX;
-    canvas.scrollTop  = scrollY;
+function scrollImage(canvasAnchorPoint, stageAnchorPoint) {
+    canvas.scrollLeft = Math.max(0, stageAnchorPoint.x - canvasAnchorPoint.x);
+    canvas.scrollTop  = Math.max(0, stageAnchorPoint.y - canvasAnchorPoint.y);
 }
 
-function setScale(scale) {
+function canvasCenterPoint() {
+    return {
+        x : Math.round(canvas.clientWidth / 2.0),
+        y : Math.round(canvas.clientHeight / 2.0)
+    };
+}
+
+function newStageAnchorPoint(oldScale, newScale, canvasAnchorPoint) {
+    const oldStageAnchorPoint = {
+        x : canvasAnchorPoint.x + canvas.scrollLeft,
+        y : canvasAnchorPoint.y + canvas.scrollTop
+    };
+
+    const oldScaleX = Math.max(oldScale, fitWidthScale());
+    const oldScaleY = Math.max(oldScale, fitHeightScale());
+    const newScaleX = Math.max(newScale, fitWidthScale());
+    const newScaleY = Math.max(newScale, fitHeightScale());
+
+    const virtualStageAnchorPoint = {
+        x : Math.round((oldStageAnchorPoint.x * newScaleX) / oldScaleX),
+        y : Math.round((oldStageAnchorPoint.y * newScaleY) / oldScaleY)
+    };
+
+    // see CSS: #stage { min-width: 100%; min-height: 100%; ... }
+    return {
+        x : Math.max(canvasAnchorPoint.x, virtualStageAnchorPoint.x),
+        y : Math.max(canvasAnchorPoint.y, virtualStageAnchorPoint.y)
+    };
+}
+
+function setScale(scale, canvasAnchorPoint) {
+    const stageAnchorPoint = newStageAnchorPoint(currentScale, scale, canvasAnchorPoint);
     currentScale = scale;
     scaleSpan.textContent = Math.round(scale * 100) + "%";
 
@@ -117,7 +145,7 @@ function setScale(scale) {
     image.style.width  = size.width  + "px";
     image.style.height = size.height + "px";
 
-    centerImage();
+    scrollImage(canvasAnchorPoint, stageAnchorPoint);
 }
 
 function onKeyDown(event) {
@@ -152,29 +180,17 @@ function onKeyDown(event) {
     }
 }
 
-function onResize() {
-    if (!image.naturalWidth) return;
-
-    const fitScale = fitViewScale();
-
-    if (currentScale <= fitScale) {
-        setScale(fitScale);
-    } else {
-        centerImage();
-    }
-}
-
 function firstImage()     { showImage(0); }
 function lastImage()      { showImage(images.length - 1); }
 function nextImage()      { showImage(Math.min(images.length - 1, currentIndex + 1)); }
 function prevImage()      { showImage(Math.max(0, currentIndex - 1)); }
 
-function zoomIn()         { setScale(nextScale(currentScale)); }
-function zoomOut()        { setScale(prevScale(currentScale)); }
-function zoomNatural()    { setScale(1.0); }
-function zoomFitView()    { setScale(fitViewScale()); }
-function zoomToggleView() { setScale(toggleScale()); }
-function zoomOverView()   { setScale(overViewScale()); }
+function zoomIn()         { setScale(nextScale(currentScale), canvasCenterPoint()); }
+function zoomOut()        { setScale(prevScale(currentScale), canvasCenterPoint()); }
+function zoomNatural()    { setScale(1.0, canvasCenterPoint()); }
+function zoomFitView()    { setScale(fitViewScale(), canvasCenterPoint()); }
+function zoomToggleView() { setScale(toggleScale(), canvasCenterPoint()); }
+function zoomOverView()   { setScale(overViewScale(), canvasCenterPoint()); }
 
 image.addEventListener("load", zoomFitView);
 
@@ -197,8 +213,6 @@ btnMinus.addEventListener("click", zoomOut);
 
 document.addEventListener("mousemove", showControls);
 document.addEventListener("keydown", onKeyDown);
-
-window.addEventListener("resize", onResize);
 
 // more initial operations ...
 showControls();
