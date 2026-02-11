@@ -74,6 +74,14 @@ function fullViewScale() {
     return Math.min(fullWidthScale(), fullHeightScale());
 }
 
+function overViewScale() {
+    return Math.max(fullWidthScale(), fullHeightScale());
+}
+
+function toggleScale(scale) {
+    return (currentScale === 1.0) ? fullViewScale() : 1.0;
+}
+
 function prevScale(scale) {
     return scales.findLast(n => n < scale) ?? scale;
 }
@@ -117,7 +125,7 @@ function onKeyDown(event) {
         case "+": zoomIn(); break;
         case "-": zoomOut(); break;
         case "*": zoomNatural(); break;
-        case "#": zoomFullView(); break;
+        case "#": zoomToggleView(); break;
         case "w": zoomFullWidth(); break;
         case "h": zoomFullHeight(); break;
         default: handled = false;
@@ -149,6 +157,7 @@ function zoomIn()         { setScale(nextScale(currentScale)); }
 function zoomOut()        { setScale(prevScale(currentScale)); }
 function zoomNatural()    { setScale(1.0); }
 function zoomFullView()   { setScale(fullViewScale()); }
+function zoomToggleView() { setScale(toggleScale()); }
 function zoomFullWidth()  { setScale(fullWidthScale()); }
 function zoomFullHeight() { setScale(fullHeightScale()); }
 
