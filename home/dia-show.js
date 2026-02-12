@@ -6,7 +6,7 @@ let mouseOverButtons = false;
 
 const HIDE_DELAY = 2000;
 
-const docTitle      = document.title;
+const docTitle     = document.title;
 const canvas       = document.getElementById("canvas");
 const image        = document.getElementById("image");
 const indexSpan    = document.getElementById("index");
