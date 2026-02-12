@@ -24,18 +24,27 @@ const btnMinus     = document.getElementById("minus");
 const scales = [0.125, 0.177, 0.250, 0.354, 0.500, 0.707, 1.000, 1.414, 2.000, 2.828, 4.000, 5.657, 8.000];
 
 // ---------------------------
-// JSON laden
+// JSON file by URL-Parameter
 // ---------------------------
-fetch("dia-show.json")
+const urlParams = new URLSearchParams(window.location.search);
+const jsonFile = urlParams.get("images") || "dia-show.json"; // Fallback auf Standard
+
+fileSpan.textContent = jsonFile; // direkt anzeigen, bevor es geladen wird
+
+fetch(jsonFile)
     .then(resp => {
-        if (!resp.ok) throw new Error("JSON konnte nicht geladen werden");
+        if (!resp.ok) throw new Error("JSON konnte nicht geladen werden: " + resp.statusText);
         return resp.json();
     })
     .then(data => {
         images = data;
         if (images.length) showImage(0);
     })
-    .catch(err => console.error("Fehler:", err));
+    .catch(err => {
+        console.error("Fehler beim Laden der JSON-Datei:", err);
+        indexSpan.textContent = "0/0";
+        fileSpan.textContent = jsonFile + " (failed)";
+    });
 
 function scheduleHide() {
     clearTimeout(hideTimer);
