@@ -6,7 +6,7 @@ let mouseOverButtons = false;
 
 const HIDE_DELAY = 2000;
 
-const docTile      = document.title;
+const docTitle      = document.title;
 const canvas       = document.getElementById("canvas");
 const image        = document.getElementById("image");
 const indexSpan    = document.getElementById("index");
@@ -61,10 +61,11 @@ function showImageByURL(url) {
     image.src = url;
     image.alt = url;
     fileSpan.textContent = url;
-    document.title = url + " - " + docTile;
+    document.title = url + " - " + docTitle;
 }
 
 function fitWidthScale() {
+    if (!image.naturalWidth) return currentScale;
     return canvas.clientWidth / image.naturalWidth;
 }
 
@@ -80,7 +81,7 @@ function overViewScale() {
     return Math.max(fitWidthScale(), fitHeightScale());
 }
 
-function toggleScale(scale) {
+function toggleScale() {
     return (currentScale === 1.0) ? fitViewScale() : 1.0;
 }
 
@@ -100,8 +101,10 @@ function getSize(scale) {
 }
 
 function scrollImage(canvasAnchorPoint, imgAnchorPoint) {
-    canvas.scrollLeft = Math.max(0, imgAnchorPoint.x - canvasAnchorPoint.x);
-    canvas.scrollTop  = Math.max(0, imgAnchorPoint.y - canvasAnchorPoint.y);
+    const maxX = Math.max(0, image.clientWidth  - canvas.clientWidth);
+    const maxY = Math.max(0, image.clientHeight - canvas.clientHeight);
+    canvas.scrollLeft = Math.min(maxX, Math.max(0, imgAnchorPoint.x - canvasAnchorPoint.x));
+    canvas.scrollTop  = Math.min(maxY, Math.max(0, imgAnchorPoint.y - canvasAnchorPoint.y));
 }
 
 function canvasCenterPoint() {
@@ -131,7 +134,7 @@ function newImgAnchorPoint(oldScale, newScale, canvasAnchorPoint) {
     };
 }
 
-function setScale(scale, canvasAnchorPoint) {
+function setScale(scale, canvasAnchorPoint = canvasCenterPoint()) {
     const imgAnchorPoint = newImgAnchorPoint(currentScale, scale, canvasAnchorPoint);
     currentScale = scale;
     scaleSpan.textContent = Math.round(scale * 100) + "%";
@@ -151,7 +154,7 @@ function onKeyDown(event) {
         // ---------------- Navigation (main) ----------------
         case "Home":     firstImage(); break;
         case "PageUp":   prevImage();  break;
-        case "PageDown": lastImage();  break;
+        case "PageDown": nextImage();  break;
         case "End":      lastImage();  break;
 
         // ---------------- Navigation (alternative) ----------------
@@ -181,12 +184,12 @@ function lastImage()      { showImage(images.length - 1); }
 function nextImage()      { showImage(Math.min(images.length - 1, currentIndex + 1)); }
 function prevImage()      { showImage(Math.max(0, currentIndex - 1)); }
 
-function zoomIn()         { setScale(nextScale(currentScale), canvasCenterPoint()); }
-function zoomOut()        { setScale(prevScale(currentScale), canvasCenterPoint()); }
-function zoomNatural()    { setScale(1.0, canvasCenterPoint()); }
-function zoomFitView()    { setScale(fitViewScale(), canvasCenterPoint()); }
-function zoomToggleView() { setScale(toggleScale(), canvasCenterPoint()); }
-function zoomOverView()   { setScale(overViewScale(), canvasCenterPoint()); }
+function zoomIn()         { setScale(nextScale(currentScale)); }
+function zoomOut()        { setScale(prevScale(currentScale)); }
+function zoomNatural()    { setScale(1.0); }
+function zoomFitView()    { setScale(fitViewScale()); }
+function zoomToggleView() { setScale(toggleScale()); }
+function zoomOverView()   { setScale(overViewScale()); }
 
 image.addEventListener("load", zoomFitView);
 
