@@ -111,16 +111,23 @@ function canvasCenterPoint() {
     };
 }
 
+function getImageOffsetInCanvas() {
+    const offsetX = Math.max(0, (canvas.clientWidth  - image.clientWidth)  / 2);
+    const offsetY = Math.max(0, (canvas.clientHeight - image.clientHeight) / 2);
+
+    return { x: offsetX, y: offsetY };
+}
+
 function newImgAnchorPoint(oldScale, newScale, canvasAnchorPoint) {
-    const imgRect = image.getBoundingClientRect();
-    const canvasRect = canvas.getBoundingClientRect();
+    const offset = getImageOffsetInCanvas();
     const oldImgAnchorPoint = {
-        x : canvasAnchorPoint.x + canvasRect.left - imgRect.left,
-        y : canvasAnchorPoint.y + canvasRect.top - imgRect.top
+        x: canvas.scrollLeft + canvasAnchorPoint.x - offset.x,
+        y: canvas.scrollTop  + canvasAnchorPoint.y - offset.y
     };
+
     return {
-        x : Math.round((oldImgAnchorPoint.x * newScale) / oldScale),
-        y : Math.round((oldImgAnchorPoint.y * newScale) / oldScale)
+        x: Math.round(oldImgAnchorPoint.x * newScale / oldScale),
+        y: Math.round(oldImgAnchorPoint.y * newScale / oldScale)
     };
 }
 
@@ -183,7 +190,7 @@ function zoomOverView()   { setScale(overViewScale(), canvasCenterPoint()); }
 
 image.addEventListener("load", zoomFitView);
 
-canvas.addEventListener("click", event => {
+image.addEventListener("click", event => {
     const rect = canvas.getBoundingClientRect();
     const point = {
         x : event.clientX - rect.left,
