@@ -1,3 +1,6 @@
 # IntelliJ IDEA artifacts
 /.idea/
 *.iml
+
+# if present ...
+/json/
