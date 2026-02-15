@@ -92,16 +92,9 @@ function fitOutsideScale() {
 }
 
 function toggleScale() {
-    const inside  = fitInsideScale();
-    const outside = fitOutsideScale();
-    const natural = 1.0;
-    if (currentScale === natural)
-        return inside;
-    if (currentScale === inside)
-        return outside;
-    // if (currentScale === outside)
-    // default:
-        return natural;
+    const scales = [fitInsideScale(), fitOutsideScale(), 1.0].sort((a, b) => a - b);
+    const next = scales.find(scale => currentScale < scale);
+    return next ?? scales[0];
 }
 
 function prevScale(scale) {
