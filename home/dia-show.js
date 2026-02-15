@@ -63,6 +63,7 @@ function showImage(index) {
         currentIndex = index;
         indexSpan.textContent = (index + 1) + "/" + images.length;
         showImageByURL(images[index]);
+        canvas.focus({ preventScroll: true });
     }
 }
 
@@ -82,16 +83,16 @@ function fitHeightScale() {
     return canvas.clientHeight / image.naturalHeight;
 }
 
-function fitViewScale() {
+function fitInsideScale() {
     return Math.min(fitWidthScale(), fitHeightScale());
 }
 
-function overViewScale() {
+function fitOutsideScale() {
     return Math.max(fitWidthScale(), fitHeightScale());
 }
 
 function toggleScale() {
-    return (currentScale === 1.0) ? fitViewScale() : 1.0;
+    return (currentScale === 1.0) ? fitInsideScale() : 1.0;
 }
 
 function prevScale(scale) {
@@ -174,7 +175,7 @@ function onKeyDown(event) {
         case "+": zoomIn(); break;
         case "-": zoomOut(); break;
         case "#": zoomToggleView(); break;
-        case "*": zoomOverView(); break;
+        case "*": zoomOutside(); break;
 
         // ---------------- Controls ----------------
         case "i": showControls(); break;
@@ -196,11 +197,11 @@ function prevImage()      { showImage(Math.max(0, currentIndex - 1)); }
 function zoomIn()         { setScale(nextScale(currentScale)); }
 function zoomOut()        { setScale(prevScale(currentScale)); }
 function zoomNatural()    { setScale(1.0); }
-function zoomFitView()    { setScale(fitViewScale()); }
+function zoomInside()     { setScale(fitInsideScale()); }
 function zoomToggleView() { setScale(toggleScale()); }
-function zoomOverView()   { setScale(overViewScale()); }
+function zoomOutside()    { setScale(fitOutsideScale()); }
 
-image.addEventListener("load", zoomFitView);
+image.addEventListener("load", zoomInside);
 
 image.addEventListener("click", event => {
     const rect = canvas.getBoundingClientRect();
@@ -209,6 +210,10 @@ image.addEventListener("click", event => {
         y : event.clientY - rect.top
     };
     setScale(toggleScale(), point);
+});
+
+canvas.addEventListener("mousedown", () => {
+    canvas.focus({ preventScroll: true });
 });
 
 btnContainer.addEventListener("mouseenter", () => {
