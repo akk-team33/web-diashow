@@ -1,27 +1,28 @@
-let images = [];
-let currentIndex = 0;
-let currentScale = 1.0;
-let hideTimer;
+let images           = [];
+let currentIndex     = 0;
+let currentScale     = 1.0;
 let mouseOverButtons = false;
+let hideTimer;
 
-const HIDE_DELAY = 2000;
+const HIDE_DELAY     = 2000;
 
-const docTitle     = document.title;
-const canvas       = document.getElementById("canvas");
-const image        = document.getElementById("image");
-const indexSpan    = document.getElementById("index");
-const fileSpan     = document.getElementById("file");
-const scaleSpan    = document.getElementById("scale");
-const btnContainer = document.getElementById("buttons");
+const docTitle       = document.title;
+const canvas         = document.getElementById("canvas");
+const image          = document.getElementById("image");
+const indexSpan      = document.getElementById("index");
+const fileSpan       = document.getElementById("file");
+const scaleSpan      = document.getElementById("scale");
+const btnContainer   = document.getElementById("buttons");
 
-const btnFirst     = document.getElementById("first");
-const btnPrev      = document.getElementById("prev");
-const btnNext      = document.getElementById("next");
-const btnLast      = document.getElementById("last");
-const btnPlus      = document.getElementById("plus");
-const btnMinus     = document.getElementById("minus");
+const btnFirst       = document.getElementById("first");
+const btnPrev        = document.getElementById("prev");
+const btnNext        = document.getElementById("next");
+const btnLast        = document.getElementById("last");
+const btnPlus        = document.getElementById("plus");
+const btnMinus       = document.getElementById("minus");
 
-const scales = [0.125, 0.177, 0.250, 0.354, 0.500, 0.707, 1.000, 1.414, 2.000, 2.828, 4.000, 5.657, 8.000];
+const fitPixelScale  = 1.0;
+const geoScales      = [0.125, 0.177, 0.250, 0.354, 0.500, 0.707, 1.000, 1.414, 2.000, 2.828, 4.000, 5.657, 8.000];
 
 // ---------------------------
 // JSON file by URL-Parameter
@@ -75,34 +76,40 @@ function showImageByURL(url) {
 }
 
 function fitWidthScale() {
-    if (!image.naturalWidth) return currentScale;
-    return canvas.clientWidth / image.naturalWidth;
+    return image.naturalWidth ? (canvas.clientWidth / image.naturalWidth) : currentScale;
 }
 
 function fitHeightScale() {
-    return canvas.clientHeight / image.naturalHeight;
+    return image.naturalHeight ? (canvas.clientHeight / image.naturalHeight) : currentScale;
 }
 
-function fitInsideScale() {
+function fitScales() {
+    return [fitWidthScale(), fitHeightScale(), fitPixelScale].sort((a, b) => a - b);
+}
+
+function fitViewScale() {
     return Math.min(fitWidthScale(), fitHeightScale());
 }
 
-function fitOutsideScale() {
-    return Math.max(fitWidthScale(), fitHeightScale());
+function prevScale(scale, scales) {
+    return scales.findLast(n => n < scale);
 }
 
-function toggleScale() {
-    const scales = [fitInsideScale(), fitOutsideScale(), 1.0].sort((a, b) => a - b);
-    const next = scales.find(scale => currentScale < scale);
-    return next ?? scales[0];
+function nextScale(scale, scales) {
+    return scales.find(n => n > scale);
 }
 
-function prevScale(scale) {
-    return scales.findLast(n => n < scale) ?? scale;
+function prevGeoScale(scale) {
+    return prevScale(scale, geoScales) ?? scale;
 }
 
-function nextScale(scale) {
-    return scales.find(n => n > scale) ?? scale;
+function nextGeoScale(scale) {
+    return nextScale(scale, geoScales) ?? scale;
+}
+
+function nextFitScale(scale) {
+    const scales = fitScales();
+    return nextScale(scale, scales) ?? scales[0];
 }
 
 function getSize(scale) {
@@ -139,7 +146,6 @@ function newImgAnchorPoint(oldScale, newScale, canvasAnchorPoint) {
         x: canvas.scrollLeft + canvasAnchorPoint.x - offset.x,
         y: canvas.scrollTop  + canvasAnchorPoint.y - offset.y
     };
-
     return {
         x: Math.round(oldImgAnchorPoint.x * newScale / oldScale),
         y: Math.round(oldImgAnchorPoint.y * newScale / oldScale)
@@ -155,6 +161,7 @@ function setScale(scale, canvasAnchorPoint = canvasCenterPoint()) {
 
     image.style.width  = size.width  + "px";
     image.style.height = size.height + "px";
+    image.style.cursor = scale < nextFitScale(scale) ? "zoom-in" : "zoom-out";
 
     scrollImage(canvasAnchorPoint, imgAnchorPoint);
 }
@@ -176,8 +183,7 @@ function onKeyDown(event) {
         // ---------------- Zoom / View ----------------
         case "+": zoomIn(); break;
         case "-": zoomOut(); break;
-        case "#": zoomToggleView(); break;
-        case "*": zoomOutside(); break;
+        case "#": zoomNextFit(); break;
 
         // ---------------- Controls ----------------
         case "i": showControls(); break;
@@ -196,22 +202,18 @@ function lastImage()      { showImage(images.length - 1); }
 function nextImage()      { showImage(Math.min(images.length - 1, currentIndex + 1)); }
 function prevImage()      { showImage(Math.max(0, currentIndex - 1)); }
 
-function zoomIn()         { setScale(nextScale(currentScale)); }
-function zoomOut()        { setScale(prevScale(currentScale)); }
-function zoomNatural()    { setScale(1.0); }
-function zoomInside()     { setScale(fitInsideScale()); }
-function zoomToggleView() { setScale(toggleScale()); }
-function zoomOutside()    { setScale(fitOutsideScale()); }
+function zoomIn()         { setScale(nextGeoScale(currentScale)); }
+function zoomOut()        { setScale(prevGeoScale(currentScale)); }
+function zoomNextFit()    { setScale(nextFitScale(currentScale)); }
 
-image.addEventListener("load", zoomInside);
-
+image.addEventListener("load", () => setScale(fitViewScale()));
 image.addEventListener("click", event => {
     const rect = canvas.getBoundingClientRect();
     const point = {
         x : event.clientX - rect.left,
         y : event.clientY - rect.top
     };
-    setScale(toggleScale(), point);
+    setScale(nextFitScale(currentScale), point);
 });
 
 canvas.addEventListener("mousedown", () => {
