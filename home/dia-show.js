@@ -11,6 +11,7 @@ const canvas         = document.getElementById("canvas");
 const image          = document.getElementById("image");
 const indexSpan      = document.getElementById("index");
 const fileSpan       = document.getElementById("file");
+const sizeSpan       = document.getElementById("size");
 const scaleSpan      = document.getElementById("scale");
 const btnContainer   = document.getElementById("buttons");
 
@@ -206,7 +207,10 @@ function zoomIn()         { setScale(nextGeoScale(currentScale)); }
 function zoomOut()        { setScale(prevGeoScale(currentScale)); }
 function zoomNextFit()    { setScale(nextFitScale(currentScale)); }
 
-image.addEventListener("load", () => setScale(fitViewScale()));
+image.addEventListener("load", () => {
+    setScale(fitViewScale());
+    sizeSpan.textContent = image.naturalWidth + " x " + image.naturalHeight;
+});
 image.addEventListener("click", event => {
     const rect = canvas.getBoundingClientRect();
     const point = {
