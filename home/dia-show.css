@@ -5,6 +5,7 @@ html, body {
     width: 100%;
     overflow: hidden;
     background-color: #222;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #canvas {
@@ -27,11 +28,12 @@ html, body {
 
 #buttons {
      position: absolute;
-     top: 10px;
-     left: 50%;
-     transform: translateX(-50%);
+     bottom: 0px;
+     left: 0px;
+     /* left: 50%;
+     transform: translateX(-50%); */
      background-color: rgba(0, 0, 0, 0.5);
-     border-radius: 8px;
+     /* border-radius: 8px; */
      z-index: 10;
      color: #fff;
      opacity: 1;
@@ -41,9 +43,9 @@ html, body {
 }
 
 #buttons td {
-    text-align: center;
+    /* text-align: center;
     vertical-align: baseline;
-    padding: 3px;
+    padding: 3px; */
     white-space: nowrap;
 }
 

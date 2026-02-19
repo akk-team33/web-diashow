@@ -12,6 +12,7 @@ const image          = document.getElementById("image");
 const indexSpan      = document.getElementById("index");
 const fileSpan       = document.getElementById("file");
 const sizeSpan       = document.getElementById("size");
+const scaledSizeSpan = document.getElementById("scaled-size");
 const scaleSpan      = document.getElementById("scale");
 const btnContainer   = document.getElementById("buttons");
 
@@ -159,6 +160,7 @@ function setScale(scale, canvasAnchorPoint = canvasCenterPoint()) {
     scaleSpan.textContent = Math.round(scale * 100) + "%";
 
     const size = getSize(scale);
+    scaledSizeSpan.textContent = size.width + " x " + size.height;
 
     image.style.width  = size.width  + "px";
     image.style.height = size.height + "px";

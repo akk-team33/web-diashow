@@ -7,21 +7,30 @@
 </head>
 <body>
 
-<table id="buttons"><tr>
-    <td><button id="first" title="First Image [Home / Shift-Backspace]">|&lt;</button></td>
-    <td><button id="prev" title="Previous Image [Backspace / PageUp]">&lt;</button></td>
-    <td><button id="minus" title="Zoom Out [-]">-</button></td>
-    <td><span id="index">0/0</span></td>
-    <td>&middot;</td>
-    <td><span id="file">NO.JPG</span></td>
-    <td>&middot;</td>
-    <td><span id="size">0 x 0</span></td>
-    <td>&middot;</td>
-    <td><span id="scale">100%</span></td>
-    <td><button id="plus" title="Zoom In [+]">+</button></td>
-    <td><button id="next" title="Next Image [Space / PageDown]">&gt;</button></td>
-    <td><button id="last" title="Last Image [End / Shift-Space]">&gt;|</button></td>
-</tr></table>
+<table id="buttons" width="100%">
+    <tr>
+        <td align="center" colspan="7">
+            <span id="index">0/0</span>
+            &middot;
+            <span id="file">NO.JPG</span>
+        </td>
+    </tr>
+    <tr>
+        <td><button id="first" title="First Image [Home / Shift-Backspace]">|&lt;</button></td>
+        <td><button id="prev" title="Previous Image [Backspace / PageUp]">&lt;</button></td>
+        <td><button id="minus" title="Zoom Out [-]">-</button></td>
+        <td width="100%" align="center">
+            <span id="size">0 x 0</span>
+            &middot;
+            <span id="scale">100%</span>
+            &middot;
+            <span id="scaled-size">0 x 0</span>
+        </td>
+        <td><button id="plus" title="Zoom In [+]">+</button></td>
+        <td><button id="next" title="Next Image [Space / PageDown]">&gt;</button></td>
+        <td><button id="last" title="Last Image [End / Shift-Space]">&gt;|</button></td>
+    </tr>
+</table>
 
 <div id="canvas" tabindex="0">
     <div id="stage">
