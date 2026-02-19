@@ -160,7 +160,7 @@ function setScale(scale, canvasAnchorPoint = canvasCenterPoint()) {
     scaleSpan.textContent = Math.round(scale * 100) + "%";
 
     const size = getSize(scale);
-    scaledSizeSpan.textContent = size.width + " x " + size.height;
+    scaledSizeSpan.textContent = size.width + " × " + size.height;
 
     image.style.width  = size.width  + "px";
     image.style.height = size.height + "px";
@@ -211,7 +211,7 @@ function zoomNextFit()    { setScale(nextFitScale(currentScale)); }
 
 image.addEventListener("load", () => {
     setScale(fitViewScale());
-    sizeSpan.textContent = image.naturalWidth + " x " + image.naturalHeight;
+    sizeSpan.textContent = image.naturalWidth + " × " + image.naturalHeight;
 });
 image.addEventListener("click", event => {
     const rect = canvas.getBoundingClientRect();

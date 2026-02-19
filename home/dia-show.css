@@ -48,13 +48,17 @@ html, body {
 
 .top-info {
     text-align: center;
-    /*font-size: 14px;*/
-    /*opacity: 0.85;*/
+    opacity: 0.85;
 }
 
 .center-info {
     text-align: center;
+    opacity: 0.85;
     white-space: nowrap;
+}
+
+#scale {
+    font-weight: bold;
 }
 
 .controls {
