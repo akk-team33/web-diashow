@@ -27,26 +27,45 @@ html, body {
 }
 
 #buttons {
-     position: absolute;
-     bottom: 0px;
-     left: 0px;
-     /* left: 50%;
-     transform: translateX(-50%); */
-     background-color: rgba(0, 0, 0, 0.5);
-     /* border-radius: 8px; */
-     z-index: 10;
-     color: #fff;
-     opacity: 1;
-     transition: opacity 0.3s ease;
-     pointer-events: auto;
-     padding: 3px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    background: rgba(0,0,0,0.5);
+    color: white;
+    padding: 6px;
+
+    display: grid;
+    gap: 6px;
+
+    opacity: 1;
+    transition: opacity 0.3s ease;
+
+    /* backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255,255,255,0.1); */
 }
 
-#buttons td {
-    /* text-align: center;
-    vertical-align: baseline;
-    padding: 3px; */
+.top-info {
+    text-align: center;
+    /*font-size: 14px;*/
+    /*opacity: 0.85;*/
+}
+
+.center-info {
+    text-align: center;
     white-space: nowrap;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns:
+        auto auto auto
+        1fr
+        auto auto auto;
+
+    align-items: center;
+    gap: 6px;
 }
 
 #buttons.hidden {
